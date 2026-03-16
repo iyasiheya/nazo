@@ -2,40 +2,43 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>癒し部屋からの脱出～Yの穏やか村化計画～</title>
+<title>癒し部屋からの脱出</title>
 
 <style>
 
 body{
 margin:0;
-font-family:"Hiragino Kaku Gothic ProN",sans-serif;
+font-family:sans-serif;
 text-align:center;
-color:#333;
 
-background:
-linear-gradient(rgba(255,255,255,0.75),rgba(255,255,255,0.9)),
-url("https://images.unsplash.com/photo-1505692794403-35c5c6b1c6d5");
-
+background-image:url("background.png");
 background-size:cover;
 background-position:center;
+background-attachment:fixed;
 
 min-height:100vh;
+}
+
+.overlay{
+
+background:rgba(255,255,255,0.85);
+min-height:100vh;
+padding:30px;
+
 }
 
 .container{
 
 max-width:650px;
 margin:auto;
-margin-top:40px;
 
-background:rgba(255,255,255,0.95);
+background:white;
 
 padding:40px;
 
 border-radius:14px;
 
-box-shadow:
-0 10px 30px rgba(0,0,0,0.2);
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
 
 }
 
@@ -56,9 +59,7 @@ margin-bottom:20px;
 img{
 
 max-width:100%;
-
 border-radius:10px;
-
 margin:20px 0;
 
 box-shadow:0 6px 15px rgba(0,0,0,0.2);
@@ -111,27 +112,19 @@ margin-top:10px;
 
 }
 
-#question{
-
-font-size:20px;
-line-height:1.6;
-
-}
-
 </style>
 
 </head>
 
-
 <body>
+
+<div class="overlay">
 
 <div class="container">
 
-<h1>屋敷の謎を解け</h1>
+<h1>癒し部屋からの脱出～Yの穏やか村化計画～</h1>
 
 <div id="progress"></div>
-
-<div id="question"></div>
 
 <img id="image">
 
@@ -144,6 +137,8 @@ line-height:1.6;
 <button onclick="submitAnswer()">送信</button>
 
 <p id="error"></p>
+
+</div>
 
 </div>
 
@@ -172,16 +167,13 @@ function loadQuestion(){
 if(current>=questions.length){
 
 document.querySelector(".container").innerHTML=
-"<h1>脱出成功！</h1><p>屋敷の謎をすべて解きました。</p>"
+"<h1>脱出成功！</h1><p>屋敷から脱出しました。</p>"
 
 return
 
 }
 
 let q=questions[current]
-
-document.getElementById("question").innerHTML=
-"問題 "+(current+1)+"：この画像の答えは？"
 
 document.getElementById("progress").innerText=
 "問題 "+(current+1)+" / "+questions.length
@@ -193,7 +185,6 @@ document.getElementById("answer").value=""
 document.getElementById("error").innerText=""
 
 }
-
 
 function submitAnswer(){
 
