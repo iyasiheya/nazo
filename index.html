@@ -135,9 +135,9 @@ let current=0
 
 const questions=[
 
-{image:"q1.png",answer:"かぎ"},
+{image:"q1.png",answer:"あああ"},
 {image:"q2.png",answer:"とけい"},
-{image:"q3.png",answer:"ほん"},
+{image:"q3.png",answer:"まりこ"},
 {image:"q4.png",answer:"ねこ"},
 {image:"q5.png",answer:"いぬ"},
 {image:"q6.png",answer:"かさ"},
@@ -153,7 +153,7 @@ function loadQuestion(){
 if(current>=questions.length){
 
 document.querySelector(".container").innerHTML=
-"<h1>クリア！</h1><p>すべての問題を解きました。</p>"
+"<h1>ワシは全部解けたぞ( 'ω')</h1><p>満員電車に乗って帰るから鬱なんよ</p>"
 
 return
 
@@ -187,7 +187,7 @@ loadQuestion()
 
 }else{
 
-document.getElementById("error").innerText="答えが違います"
+document.getElementById("error").innerText="ん？違うみたいや( 'ω')"
 
 }
 
