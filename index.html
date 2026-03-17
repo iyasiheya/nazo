@@ -2,18 +2,14 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>癒し部屋からの脱出</title>
+<title>脱出ゲーム</title>
 
 <style>
 
 body{
-
 margin:0;
 font-family:sans-serif;
 text-align:center;
-color:white;
-
-/* 背景そのまま表示 */
 
 background-image:url("background.jpg");
 background-size:cover;
@@ -25,175 +21,174 @@ min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-
 }
-
-/* 問題表示枠 */
 
 .container{
-
 max-width:650px;
-padding:40px;
-
-/* 半透明 */
-
-background:rgba(0,0,0,0.4);
-
+padding:30px;
+background:rgba(0,0,0,0.5);
 border-radius:12px;
-
-box-shadow:0 10px 30px rgba(0,0,0,0.6);
-
-}
-
-h1{
-
-margin-bottom:10px;
-
-}
-
-#progress{
-
-margin-bottom:15px;
-
 }
 
 img{
-
 max-width:100%;
-margin:20px 0;
-border-radius:8px;
-
+border-radius:10px;
+margin-bottom:20px;
 }
 
 input{
-
-width:75%;
-padding:12px;
-
+width:180px;
+padding:10px;
 border-radius:8px;
 border:none;
-
 font-size:16px;
-
+margin-left:10px;
 }
 
 button{
-
-margin-top:15px;
-
+margin-top:20px;
 padding:10px 28px;
-
 border:none;
 border-radius:8px;
-
 background:#ffd700;
-
 font-size:16px;
-
 cursor:pointer;
-
 }
 
-#error{
-
+.row{
 margin-top:10px;
-color:#ff8080;
-
 }
 
 </style>
-
 </head>
-
 
 <body>
 
-<div class="container">
-
-<h1>癒し部屋からの脱出～Yの穏やか村化計画～</h1>
-
-<div id="progress"></div>
-
-<img id="image">
-
-<br>
-
-<input id="answer" placeholder="答え">
-
-<br>
-
-<button onclick="submitAnswer()">送信</button>
-
-<p id="error"></p>
-
-</div>
-
+<div class="container" id="container"></div>
 
 <script>
 
 let current=0
+let state="start"
+// start / question / correct / wrong / end
 
 const questions=[
-
-{image:"q1.png",answer:"あああ"},
-{image:"q2.png",answer:"とけい"},
-{image:"q3.png",answer:"まりこ"},
-{image:"q4.png",answer:"ねこ"},
-{image:"q5.png",answer:"いぬ"},
-{image:"q6.png",answer:"かさ"},
-{image:"q7.png",answer:"みず"},
-{image:"q8.png",answer:"はな"},
-{image:"q9.png",answer:"くるま"},
-{image:"q10.png",answer:"でぐち"}
-
+{image:"q1.png",answer:"あああ",clear:"clear1.png"},
+{image:"q2.png",answer:"とけい",clear:"clear2.png"},
+{image:"q3.png",answer:"まりこ",clear:"clear3.png"},
+{image:"q4.png",answer:"ねこ",clear:"clear4.png"},
+{image:"q5.png",answer:"いぬ",clear:"clear5.png"},
+{image:"q6.png",answer:"かさ",clear:"clear6.png"},
+{image:"q7.png",answer:"みず",clear:"clear7.png"},
+{image:"q8.png",answer:"はな",clear:"clear8.png"},
+{image:"q9.png",answer:"くるま",clear:"clear9.png"},
+{image:"q10.png",answer:"でぐち",clear:"clear10.png"}
 ]
 
-function loadQuestion(){
+function render(){
 
-if(current>=questions.length){
+const c=document.getElementById("container")
 
-document.querySelector(".container").innerHTML=
-"<h1>ワシは全部解けたぞ( 'ω')</h1><p>満員電車に乗って帰るから鬱なんよ</p>"
-
+// ---------- スタート ----------
+if(state==="start"){
+c.innerHTML=`
+<img src="start.png">
+<br>
+<button onclick="startGame()">次の部屋へ進む</button>
+`
 return
-
 }
+
+// ---------- 問題 ----------
+if(state==="question"){
 
 let q=questions[current]
 
-document.getElementById("progress").innerText=
-"問題 "+(current+1)+" / "+questions.length
+c.innerHTML=`
+<img src="${q.image}">
+<div class="row">
+<label>合言葉は <input id="answer"></label>
+</div>
+<button onclick="submitAnswer()">送信</button>
+`
 
-document.getElementById("image").src=q.image
+document.getElementById("answer").addEventListener("keydown",function(e){
+if(e.key==="Enter"){submitAnswer()}
+})
 
-document.getElementById("answer").value=""
+return
+}
 
-document.getElementById("error").innerText=""
+// ---------- 正解 ----------
+if(state==="correct"){
 
+let q=questions[current]
+
+c.innerHTML=`
+<img src="${q.clear}">
+<br>
+<button onclick="nextQuestion()">次の部屋へ進む</button>
+`
+return
+}
+
+// ---------- 不正解 ----------
+if(state==="wrong"){
+c.innerHTML=`
+<img src="miss.png">
+<br>
+<button onclick="retry()">もう一度</button>
+`
+return
+}
+
+// ---------- 最終 ----------
+if(state==="end"){
+c.innerHTML=`
+<img src="final.png">
+`
+return
+}
+
+}
+
+// ===== 処理 =====
+
+function startGame(){
+state="question"
+render()
 }
 
 function submitAnswer(){
 
-let input=document.getElementById("answer")
-.value.trim().toLowerCase()
-
+let input=document.getElementById("answer").value.trim().toLowerCase()
 let correct=questions[current].answer.toLowerCase()
 
 if(input===correct){
-
-current++
-
-loadQuestion()
-
+state="correct"
 }else{
-
-document.getElementById("error").innerText="ん？違うみたいや( 'ω')"
-
+state="wrong"
 }
 
+render()
 }
 
-loadQuestion()
+function nextQuestion(){
+current++
+if(current>=questions.length){
+state="end"
+}else{
+state="question"
+}
+render()
+}
+
+function retry(){
+state="question"
+render()
+}
+
+render()
 
 </script>
 
