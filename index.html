@@ -66,7 +66,7 @@ color:white;
 text-shadow:0 2px 5px rgba(0,0,0,0.8);
 }
 
-/* 暗転フェード */
+/* 黒フェード */
 #fadeScreen{
 position:fixed;
 top:0;
@@ -76,8 +76,20 @@ height:100%;
 background:black;
 opacity:0;
 pointer-events:none;
-transition:opacity 0.4s;
 z-index:9999;
+}
+
+/* 白フェード */
+#whiteScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:white;
+opacity:0;
+pointer-events:none;
+z-index:10000;
 }
 
 </style>
@@ -87,6 +99,7 @@ z-index:9999;
 
 <div class="container" id="container"></div>
 <div id="fadeScreen"></div>
+<div id="whiteScreen"></div>
 
 <script>
 
@@ -102,7 +115,6 @@ bgm.loop = true
 wrongBGM.loop = true
 finalBGM.loop = true
 
-// 音量調整
 bgm.volume = 0.1
 wrongBGM.volume = 0.5
 finalBGM.volume = 0.2
@@ -197,32 +209,51 @@ return
 
 }
 
-// ===== 暗転 → フェードイン =====
+// ===== 暗転＋遅延ロード =====
 function fadeToQuestion(){
 
 const f=document.getElementById("fadeScreen")
 
-// ① 完全に暗転
 f.style.transition = "none"
 f.style.opacity = 1
 
-// ② 次の問題データ取得
 let q = questions[current]
-
-// ③ 画像を先読み
 const img = new Image()
 img.src = q.image
 
 img.onload = () => {
 
-    // ④ 画像読み込み完了後に描画
-    state="question"
+    setTimeout(()=>{
+
+        state="question"
+        render()
+
+        f.style.transition = "opacity 1.2s"
+        f.style.opacity = 0
+
+    },300)
+
+}
+
+}
+
+// ===== Q10白演出 =====
+function whiteFlashToClear(){
+
+const w=document.getElementById("whiteScreen")
+
+w.style.transition = "none"
+w.style.opacity = 1
+
+setTimeout(()=>{
+
+    state="correct"
     render()
 
-    // ⑤ フェードイン
-    f.style.transition = "opacity 0.6s"
-    f.style.opacity = 0
-}
+    w.style.transition = "opacity 3s"
+    w.style.opacity = 0
+
+},1000)
 
 }
 
@@ -244,6 +275,11 @@ if(input===correct){
 
 correctSE.currentTime = 0
 correctSE.play()
+
+if(current===9){
+whiteFlashToClear()
+return
+}
 
 state="correct"
 
@@ -302,7 +338,6 @@ bgm.play()
 fadeToQuestion()
 }
 
-// 初期表示
 render()
 
 </script>
