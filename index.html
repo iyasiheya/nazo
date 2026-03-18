@@ -242,18 +242,31 @@ function whiteFlashToClear(){
 
 const w=document.getElementById("whiteScreen")
 
-w.style.transition = "none"
-w.style.opacity = 1
+let q = questions[current]
 
-setTimeout(()=>{
+// ① クリア画像を先読み
+const img = new Image()
+img.src = q.clear
 
-    state="correct"
-    render()
+img.onload = () => {
 
-    w.style.transition = "opacity 3s"
-    w.style.opacity = 0
+    // ② 一瞬で白
+    w.style.transition = "none"
+    w.style.opacity = 1
 
-},1000)
+    // ③ 5秒待機
+    setTimeout(()=>{
+
+        state="correct"
+        render()
+
+        // ④ ゆっくりフェードアウト
+        w.style.transition = "opacity 3s"
+        w.style.opacity = 0
+
+    },5000)
+
+}
 
 }
 
