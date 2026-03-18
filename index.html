@@ -2,17 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>癒し部屋からの脱出</title>
+<title>脱出ゲーム</title>
 
 <style>
 
-.label-text{
-font-size:32px;
-font-weight:bold;
-color:white;
-text-shadow:0 2px 5px rgba(0,0,0,0.8);
-}
-  
 body{
 margin:0;
 font-family:sans-serif;
@@ -66,6 +59,14 @@ cursor:pointer;
 margin-top:10px;
 }
 
+/* 合言葉は の装飾 */
+.label-text{
+font-size:32px;
+font-weight:bold;
+color:white;
+text-shadow:0 2px 5px rgba(0,0,0,0.8);
+}
+
 </style>
 </head>
 
@@ -77,10 +78,10 @@ margin-top:10px;
 
 let current=0
 let state="start"
-// start / question / correct / wrong / end
+// start / question / correct / wrong / dummy / end
 
 const questions=[
-{image:"q1.png",answer:"あああ",clear:"clear1.png"},
+{image:"q1.png",answer:"んがけくずれ",clear:"clear1.png"},
 {image:"q2.png",answer:"けいばじょう",clear:"clear2.png"},
 {image:"q3.png",answer:"まりこ",clear:"clear3.png"},
 {image:"q4.png",answer:"まくぽて",clear:"clear4.png"},
@@ -89,7 +90,7 @@ const questions=[
 {image:"q7.png",answer:"げんしん",clear:"clear7.png"},
 {image:"q8.png",answer:"ちゃそまる",clear:"clear8.png"},
 {image:"q9.png",answer:"いやしへや",clear:"clear9.png"},
-{image:"q10.png",answer:"まんいんでんしゃ",clear:"clear10.png"}
+{image:"q10.png",answer:"あさめさますだけ",clear:"clear10.png",dummy:"まんいんでんしゃ"}
 ]
 
 function render(){
@@ -139,12 +140,22 @@ c.innerHTML=`
 return
 }
 
+// ---------- ダミー（10問目専用） ----------
+if(state==="dummy"){
+c.innerHTML=`
+<img src="dummy.png">
+<br>
+<button onclick="retry()">戻る</button>
+`
+return
+}
+
 // ---------- 不正解 ----------
 if(state==="wrong"){
 c.innerHTML=`
 <img src="miss.png">
 <br>
-<button onclick="retry()">もう一度</button>
+<button onclick="retry()">戻る</button>
 `
 return
 }
@@ -169,10 +180,15 @@ render()
 function submitAnswer(){
 
 let input=document.getElementById("answer").value.trim().toLowerCase()
-let correct=questions[current].answer.toLowerCase()
+let q=questions[current]
+let correct=q.answer.toLowerCase()
 
 if(input===correct){
 state="correct"
+
+}else if(current===9 && input===q.dummy.toLowerCase()){
+state="dummy"
+
 }else{
 state="wrong"
 }
