@@ -66,12 +66,31 @@ color:white;
 text-shadow:0 2px 5px rgba(0,0,0,0.8);
 }
 
+/* 暗転フェード */
+#fadeScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+opacity:0;
+pointer-events:none;
+transition:opacity 0.4s;
+z-index:999;
+}
+
+.fade-black{
+opacity:1;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="container" id="container"></div>
+<div id="fadeScreen"></div>
 
 <script>
 
@@ -87,31 +106,29 @@ bgm.loop = true
 wrongBGM.loop = true
 finalBGM.loop = true
 
-// ↓↓↓ ここに追加 ↓↓↓
+// 音量調整（SE強め）
 bgm.volume = 0.1
 wrongBGM.volume = 0.5
 finalBGM.volume = 0.2
-
 correctSE.volume = 1.0
 wrongSE.volume = 1.0
 
 // ===== 状態 =====
 let current=0
 let state="start"
-// start / question / correct / wrong / dummy / end
 
 // ===== 問題 =====
 const questions=[
-{image:"q1.png",answer:"んがけくずれ",clear:"clear1.png"},
-{image:"q2.png",answer:"けいばじょう",clear:"clear2.png"},
+{image:"q1.png",answer:"あああ",clear:"clear1.png"},
+{image:"q2.png",answer:"とけい",clear:"clear2.png"},
 {image:"q3.png",answer:"まりこ",clear:"clear3.png"},
-{image:"q4.png",answer:"まくぽて",clear:"clear4.png"},
-{image:"q5.png",answer:"おやすみと",clear:"clear5.png"},
-{image:"q6.png",answer:"ですてぃにー",clear:"clear6.png"},
-{image:"q7.png",answer:"げんしん",clear:"clear7.png"},
-{image:"q8.png",answer:"ちゃそまる",clear:"clear8.png"},
-{image:"q9.png",answer:"いやしへや",clear:"clear9.png"},
-{image:"q10.png",answer:"あさめさますだけ",clear:"clear10.png",dummy:"まんいんでんしゃ"}
+{image:"q4.png",answer:"ねこ",clear:"clear4.png"},
+{image:"q5.png",answer:"いぬ",clear:"clear5.png"},
+{image:"q6.png",answer:"かさ",clear:"clear6.png"},
+{image:"q7.png",answer:"みず",clear:"clear7.png"},
+{image:"q8.png",answer:"はな",clear:"clear8.png"},
+{image:"q9.png",answer:"くるま",clear:"clear9.png"},
+{image:"q10.png",answer:"でぐち",clear:"clear10.png",dummy:"だみー"}
 ]
 
 // ===== 描画 =====
@@ -129,7 +146,6 @@ return
 }
 
 if(state==="question"){
-
 let q=questions[current]
 
 c.innerHTML=`
@@ -148,7 +164,6 @@ return
 }
 
 if(state==="correct"){
-
 let q=questions[current]
 
 c.innerHTML=`
@@ -186,15 +201,27 @@ return
 
 }
 
+// ===== 暗転して問題へ =====
+function fadeToQuestion(){
+
+const f=document.getElementById("fadeScreen")
+
+f.classList.add("fade-black")
+
+setTimeout(()=>{
+state="question"
+render()
+f.classList.remove("fade-black")
+},400)
+
+}
+
 // ===== 処理 =====
 
 function startGame(){
-
 bgm.currentTime = 0
 bgm.play()
-
-state="question"
-render()
+fadeToQuestion()
 }
 
 function submitAnswer(){
@@ -213,7 +240,6 @@ state="correct"
 }else if(current===9 && input===q.dummy.toLowerCase()){
 
 bgm.pause()
-
 wrongBGM.currentTime = 0
 wrongBGM.play()
 
@@ -222,7 +248,6 @@ state="dummy"
 }else{
 
 bgm.pause()
-
 wrongBGM.currentTime = 0
 wrongBGM.play()
 
@@ -250,7 +275,8 @@ finalBGM.play()
 state="end"
 
 }else{
-state="question"
+fadeToQuestion()
+return
 }
 
 render()
@@ -263,8 +289,7 @@ wrongBGM.currentTime = 0
 
 bgm.play()
 
-state="question"
-render()
+fadeToQuestion()
 }
 
 // 初期表示
