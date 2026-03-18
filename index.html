@@ -59,7 +59,6 @@ cursor:pointer;
 margin-top:10px;
 }
 
-/* 合言葉は の装飾 */
 .label-text{
 font-size:32px;
 font-weight:bold;
@@ -76,10 +75,24 @@ text-shadow:0 2px 5px rgba(0,0,0,0.8);
 
 <script>
 
+// ===== 音 =====
+const bgm = new Audio("bgm.mp3")
+const wrongBGM = new Audio("wrong_bgm.mp3")
+const finalBGM = new Audio("final.mp3")
+
+const correctSE = new Audio("correct.mp3")
+const wrongSE = new Audio("wrong.mp3")
+
+bgm.loop = true
+wrongBGM.loop = true
+finalBGM.loop = true
+
+// ===== 状態 =====
 let current=0
 let state="start"
 // start / question / correct / wrong / dummy / end
 
+// ===== 問題 =====
 const questions=[
 {image:"q1.png",answer:"んがけくずれ",clear:"clear1.png"},
 {image:"q2.png",answer:"けいばじょう",clear:"clear2.png"},
@@ -93,11 +106,11 @@ const questions=[
 {image:"q10.png",answer:"あさめさますだけ",clear:"clear10.png",dummy:"まんいんでんしゃ"}
 ]
 
+// ===== 描画 =====
 function render(){
 
 const c=document.getElementById("container")
 
-// ---------- スタート ----------
 if(state==="start"){
 c.innerHTML=`
 <img src="start.png">
@@ -107,7 +120,6 @@ c.innerHTML=`
 return
 }
 
-// ---------- 問題 ----------
 if(state==="question"){
 
 let q=questions[current]
@@ -127,7 +139,6 @@ if(e.key==="Enter"){submitAnswer()}
 return
 }
 
-// ---------- 正解 ----------
 if(state==="correct"){
 
 let q=questions[current]
@@ -140,7 +151,6 @@ c.innerHTML=`
 return
 }
 
-// ---------- ダミー（10問目専用） ----------
 if(state==="dummy"){
 c.innerHTML=`
 <img src="dummy.png">
@@ -150,7 +160,6 @@ c.innerHTML=`
 return
 }
 
-// ---------- 不正解 ----------
 if(state==="wrong"){
 c.innerHTML=`
 <img src="miss.png">
@@ -160,7 +169,6 @@ c.innerHTML=`
 return
 }
 
-// ---------- 最終 ----------
 if(state==="end"){
 c.innerHTML=`
 <img src="final.png">
@@ -173,6 +181,10 @@ return
 // ===== 処理 =====
 
 function startGame(){
+
+bgm.currentTime = 0
+bgm.play()
+
 state="question"
 render()
 }
@@ -184,12 +196,31 @@ let q=questions[current]
 let correct=q.answer.toLowerCase()
 
 if(input===correct){
+
+correctSE.currentTime = 0
+correctSE.play()
+
 state="correct"
 
 }else if(current===9 && input===q.dummy.toLowerCase()){
+
+bgm.pause()
+
+wrongBGM.currentTime = 0
+wrongBGM.play()
+
 state="dummy"
 
 }else{
+
+bgm.pause()
+
+wrongBGM.currentTime = 0
+wrongBGM.play()
+
+wrongSE.currentTime = 0
+wrongSE.play()
+
 state="wrong"
 }
 
@@ -197,20 +228,38 @@ render()
 }
 
 function nextQuestion(){
+
 current++
+
 if(current>=questions.length){
+
+bgm.pause()
+bgm.currentTime = 0
+
+finalBGM.currentTime = 0
+finalBGM.play()
+
 state="end"
+
 }else{
 state="question"
 }
+
 render()
 }
 
 function retry(){
+
+wrongBGM.pause()
+wrongBGM.currentTime = 0
+
+bgm.play()
+
 state="question"
 render()
 }
 
+// 初期表示
 render()
 
 </script>
