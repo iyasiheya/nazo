@@ -202,20 +202,27 @@ function fadeToQuestion(){
 
 const f=document.getElementById("fadeScreen")
 
-// 一瞬で真っ暗
+// ① 完全に暗転
 f.style.transition = "none"
 f.style.opacity = 1
 
-// 少し待ってから画面切替 → フェードイン
-setTimeout(()=>{
+// ② 次の問題データ取得
+let q = questions[current]
 
-state="question"
-render()
+// ③ 画像を先読み
+const img = new Image()
+img.src = q.image
 
-f.style.transition = "opacity 0.6s"
-f.style.opacity = 0
+img.onload = () => {
 
-},200)
+    // ④ 画像読み込み完了後に描画
+    state="question"
+    render()
+
+    // ⑤ フェードイン
+    f.style.transition = "opacity 0.6s"
+    f.style.opacity = 0
+}
 
 }
 
