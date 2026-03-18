@@ -77,11 +77,7 @@ background:black;
 opacity:0;
 pointer-events:none;
 transition:opacity 0.4s;
-z-index:999;
-}
-
-.fade-black{
-opacity:1;
+z-index:9999;
 }
 
 </style>
@@ -106,7 +102,7 @@ bgm.loop = true
 wrongBGM.loop = true
 finalBGM.loop = true
 
-// 音量調整（SE強め）
+// 音量調整
 bgm.volume = 0.1
 wrongBGM.volume = 0.5
 finalBGM.volume = 0.2
@@ -119,16 +115,16 @@ let state="start"
 
 // ===== 問題 =====
 const questions=[
-{image:"q1.png",answer:"あああ",clear:"clear1.png"},
-{image:"q2.png",answer:"とけい",clear:"clear2.png"},
+{image:"q1.png",answer:"んがけくずれ",clear:"clear1.png"},
+{image:"q2.png",answer:"けいばじょう",clear:"clear2.png"},
 {image:"q3.png",answer:"まりこ",clear:"clear3.png"},
-{image:"q4.png",answer:"ねこ",clear:"clear4.png"},
-{image:"q5.png",answer:"いぬ",clear:"clear5.png"},
-{image:"q6.png",answer:"かさ",clear:"clear6.png"},
-{image:"q7.png",answer:"みず",clear:"clear7.png"},
-{image:"q8.png",answer:"はな",clear:"clear8.png"},
-{image:"q9.png",answer:"くるま",clear:"clear9.png"},
-{image:"q10.png",answer:"でぐち",clear:"clear10.png",dummy:"だみー"}
+{image:"q4.png",answer:"まくぽて",clear:"clear4.png"},
+{image:"q5.png",answer:"おやすみと",clear:"clear5.png"},
+{image:"q6.png",answer:"ですてぃにー",clear:"clear6.png"},
+{image:"q7.png",answer:"げんしん",clear:"clear7.png"},
+{image:"q8.png",answer:"ちゃそまる",clear:"clear8.png"},
+{image:"q9.png",answer:"いやしへや",clear:"clear9.png"},
+{image:"q10.png",answer:"あさめさますだけ",clear:"clear10.png",dummy:"まんいんでんしゃ"}
 ]
 
 // ===== 描画 =====
@@ -201,18 +197,25 @@ return
 
 }
 
-// ===== 暗転して問題へ =====
+// ===== 暗転 → フェードイン =====
 function fadeToQuestion(){
 
 const f=document.getElementById("fadeScreen")
 
-f.classList.add("fade-black")
+// 一瞬で真っ暗
+f.style.transition = "none"
+f.style.opacity = 1
 
+// 少し待ってから画面切替 → フェードイン
 setTimeout(()=>{
+
 state="question"
 render()
-f.classList.remove("fade-black")
-},400)
+
+f.style.transition = "opacity 0.6s"
+f.style.opacity = 0
+
+},200)
 
 }
 
