@@ -250,18 +250,20 @@ img.src = q.clear
 
 img.onload = () => {
 
-    // ② 一瞬で白
+    // ★ ここ追加：BGM停止
+    bgm.pause()
+    bgm.currentTime = 0
+
+    // 白開始
     w.style.transition = "none"
     w.style.opacity = 1
 
-    // ③ 5秒待機
     setTimeout(()=>{
 
         state="correct"
         render()
 
-        // ④ ゆっくりフェードアウト
-        w.style.transition = "opacity 3s"
+        w.style.transition = "opacity 2s"
         w.style.opacity = 0
 
     },5000)
