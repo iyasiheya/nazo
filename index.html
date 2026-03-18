@@ -286,8 +286,11 @@ let correct=q.answer.toLowerCase()
 
 if(input===correct){
 
+// ★ Q10以外だけSEを鳴らす
+if(current !== 9){
 correctSE.currentTime = 0
 correctSE.play()
+}
 
 if(current===9){
 whiteFlashToClear()
