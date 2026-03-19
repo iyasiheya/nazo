@@ -241,7 +241,7 @@ img.onload = () => {
 
 }
 
-// ===== Q1〜Q9用 白フェード（1.2秒） =====
+// ===== Q1〜Q9用 白フェード（2秒） =====
 function whiteFlashQuick(){
 
 const w=document.getElementById("whiteScreen")
@@ -260,10 +260,10 @@ img.onload = () => {
         state="correct"
         render()
 
-        w.style.transition = "opacity 1.2s"
+        w.style.transition = "opacity 2s"
         w.style.opacity = 0
 
-        // フェード終了と同時にSE
+        // SEは1.2秒で再生（維持）
         setTimeout(()=>{
             correctSE.currentTime = 0
             correctSE.play()
@@ -322,7 +322,6 @@ let input=document.getElementById("answer").value.trim().toLowerCase()
 let q=questions[current]
 let correct=q.answer.toLowerCase()
 
-// 隠しコマンド
 if(current===0 && input==="みかす"){
 current = 9
 fadeToQuestion()
