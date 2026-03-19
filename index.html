@@ -66,7 +66,6 @@ color:white;
 text-shadow:0 2px 5px rgba(0,0,0,0.8);
 }
 
-/* 黒フェード */
 #fadeScreen{
 position:fixed;
 top:0;
@@ -79,7 +78,6 @@ pointer-events:none;
 z-index:9999;
 }
 
-/* 白フェード */
 #whiteScreen{
 position:fixed;
 top:0;
@@ -199,14 +197,24 @@ return
 
 if(state==="end"){
 c.innerHTML=`
-<video src="final.mp4" autoplay playsinline style="max-width:100%; border-radius:10px;"></video>
+<video id="endingVideo" src="final.mp4" autoplay playsinline></video>
+<div id="endBtn" style="display:none;">
+<button onclick="goTitle()">タイトルに戻る</button>
+</div>
 `
+
+// 動画終了でボタン表示
+const v=document.getElementById("endingVideo")
+v.onended = ()=>{
+document.getElementById("endBtn").style.display="block"
+}
+
 return
 }
 
 }
 
-// ===== 暗転＋ロード =====
+// ===== 暗転 =====
 function fadeToQuestion(){
 
 const f=document.getElementById("fadeScreen")
@@ -234,11 +242,10 @@ img.onload = () => {
 
 }
 
-// ===== Q10白演出（BGM停止＋画像先読み＋5秒） =====
+// ===== 白演出 =====
 function whiteFlashToClear(){
 
 const w=document.getElementById("whiteScreen")
-
 let q = questions[current]
 
 const img = new Image()
@@ -246,7 +253,6 @@ img.src = q.clear
 
 img.onload = () => {
 
-    // ★ BGM停止
     bgm.pause()
     bgm.currentTime = 0
 
@@ -270,13 +276,10 @@ img.onload = () => {
 // ===== 処理 =====
 
 function startGame(){
-
-// 初回クリックでBGM再生
 if(bgm.paused){
 bgm.currentTime = 0
 bgm.play()
 }
-
 fadeToQuestion()
 }
 
@@ -286,9 +289,15 @@ let input=document.getElementById("answer").value.trim().toLowerCase()
 let q=questions[current]
 let correct=q.answer.toLowerCase()
 
+// ★ 隠しコマンド（Q1限定）
+if(current===0 && input==="みかす"){
+current = 9
+fadeToQuestion()
+return
+}
+
 if(input===correct){
 
-// Q10以外のみSE
 if(current !== 9){
 correctSE.currentTime = 0
 correctSE.play()
@@ -351,6 +360,13 @@ wrongBGM.currentTime = 0
 bgm.play()
 
 fadeToQuestion()
+}
+
+// ★ タイトルに戻る
+function goTitle(){
+current = 0
+state = "start"
+render()
 }
 
 render()
