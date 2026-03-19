@@ -12,10 +12,8 @@ font-family:sans-serif;
 text-align:center;
 
 background-image:url("background.jpg");
-background-size:contain;
-background-repeat:no-repeat;
+background-size:cover;
 background-position:center;
-background-color:black;
 background-attachment:fixed;
 
 min-height:100vh;
@@ -44,7 +42,7 @@ border-radius:10px;
 margin-bottom:20px;
 }
 
-/* ★ 最後の動画だけ全画面表示 */
+/* 最後の動画だけ拡大 */
 #endingVideo{
 width:100vw;
 height:100vh;
@@ -286,7 +284,7 @@ img.onload = () => {
 
 }
 
-// ===== Q10用（SEなし） =====
+// ===== Q10用 =====
 function whiteFlashToClear(){
 
 const w=document.getElementById("whiteScreen")
