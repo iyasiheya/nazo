@@ -30,7 +30,7 @@ background:rgba(0,0,0,0.5);
 border-radius:12px;
 }
 
-img{
+img, video{
 max-width:100%;
 border-radius:10px;
 margin-bottom:20px;
@@ -106,18 +106,15 @@ z-index:10000;
 // ===== 音 =====
 const bgm = new Audio("bgm.mp3")
 const wrongBGM = new Audio("wrong_bgm.mp3")
-const finalBGM = new Audio("final.mp3")
 
 const correctSE = new Audio("correct.mp3")
 const wrongSE = new Audio("wrong.mp3")
 
 bgm.loop = true
 wrongBGM.loop = true
-finalBGM.loop = true
 
 bgm.volume = 0.1
 wrongBGM.volume = 0.5
-finalBGM.volume = 0.2
 correctSE.volume = 1.0
 wrongSE.volume = 1.0
 
@@ -202,14 +199,14 @@ return
 
 if(state==="end"){
 c.innerHTML=`
-<img src="final.png">
+<video src="final.mp4" autoplay playsinline style="max-width:100%; border-radius:10px;"></video>
 `
 return
 }
 
 }
 
-// ===== 暗転＋遅延ロード =====
+// ===== 暗転＋ロード =====
 function fadeToQuestion(){
 
 const f=document.getElementById("fadeScreen")
@@ -237,24 +234,22 @@ img.onload = () => {
 
 }
 
-// ===== Q10白演出 =====
+// ===== Q10白演出（BGM停止＋画像先読み＋5秒） =====
 function whiteFlashToClear(){
 
 const w=document.getElementById("whiteScreen")
 
 let q = questions[current]
 
-// ① クリア画像を先読み
 const img = new Image()
 img.src = q.clear
 
 img.onload = () => {
 
-    // ★ ここ追加：BGM停止
+    // ★ BGM停止
     bgm.pause()
     bgm.currentTime = 0
 
-    // 白開始
     w.style.transition = "none"
     w.style.opacity = 1
 
@@ -275,8 +270,13 @@ img.onload = () => {
 // ===== 処理 =====
 
 function startGame(){
+
+// 初回クリックでBGM再生
+if(bgm.paused){
 bgm.currentTime = 0
 bgm.play()
+}
+
 fadeToQuestion()
 }
 
@@ -288,7 +288,7 @@ let correct=q.answer.toLowerCase()
 
 if(input===correct){
 
-// ★ Q10以外だけSEを鳴らす
+// Q10以外のみSE
 if(current !== 9){
 correctSE.currentTime = 0
 correctSE.play()
@@ -332,9 +332,6 @@ if(current>=questions.length){
 
 bgm.pause()
 bgm.currentTime = 0
-
-finalBGM.currentTime = 0
-finalBGM.play()
 
 state="end"
 
