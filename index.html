@@ -16,16 +16,15 @@ text-align:center;
 background-image:url("background.jpg");
 background-size:cover;
 background-position:center;
-background-attachment:fixed;
+background-attachment:scroll; /* ★スクロール可能に */
 
 min-height:100vh;
-
-/* 中央固定をやめる */
 display:block;
 padding:20px;
+overflow-y:auto;
 }
 
-/* ===== コンテナ（可変サイズ） ===== */
+/* ===== コンテナ ===== */
 .container{
 width:min(92vw,700px);
 margin:0 auto;
@@ -34,7 +33,7 @@ background:rgba(0,0,0,0.5);
 border-radius:12px;
 }
 
-/* ===== 画像・動画（スマホでも大きく） ===== */
+/* ===== 画像・動画 ===== */
 img, video{
 width:100%;
 height:auto;
@@ -44,7 +43,7 @@ border-radius:10px;
 margin-bottom:20px;
 }
 
-/* ===== 入力系 ===== */
+/* ===== UI ===== */
 input{
 width:180px;
 padding:10px;
@@ -100,7 +99,7 @@ pointer-events:none;
 z-index:10000;
 }
 
-/* ===== スマホ最適化（強め） ===== */
+/* ===== スマホ最適化 ===== */
 @media (max-width:600px){
 
 .label-text{
@@ -117,8 +116,11 @@ font-size:14px;
 padding:8px 20px;
 }
 
+/* ★画像を横幅いっぱいに（重要） */
 img, video{
-max-height:65vh;
+width:100%;
+height:auto;
+max-height:none;
 }
 
 }
@@ -237,7 +239,6 @@ c.innerHTML=`
 </div>
 `
 
-// 動画終了でボタン表示
 const v=document.getElementById("endingVideo")
 v.onended = ()=>{
 document.getElementById("endBtn").style.display="block"
@@ -276,19 +277,25 @@ img.onload = () => {
 
 }
 
-// ===== 白演出 =====
+// ===== 白フェード =====
 function whiteFlashToClear(){
 
 const w=document.getElementById("whiteScreen")
 let q = questions[current]
+
+// フェード時間
+let fadeTime = (current === 9) ? 4000 : 1200
 
 const img = new Image()
 img.src = q.clear
 
 img.onload = () => {
 
-    bgm.pause()
-    bgm.currentTime = 0
+    // Q10だけBGM停止
+    if(current === 9){
+        bgm.pause()
+        bgm.currentTime = 0
+    }
 
     w.style.transition = "none"
     w.style.opacity = 1
@@ -298,10 +305,19 @@ img.onload = () => {
         state="correct"
         render()
 
-        w.style.transition = "opacity 2s"
+        // フェード開始
+        w.style.transition = `opacity ${fadeTime/1000}s`
         w.style.opacity = 0
 
-    },5000)
+        // Q1〜9のみSE（終了と同時）
+        if(current !== 9){
+            setTimeout(()=>{
+                correctSE.currentTime = 0
+                correctSE.play()
+            }, fadeTime)
+        }
+
+    },300)
 
 }
 
@@ -323,7 +339,7 @@ let input=document.getElementById("answer").value.trim().toLowerCase()
 let q=questions[current]
 let correct=q.answer.toLowerCase()
 
-// ★ 隠しコマンド（Q1限定）
+// 隠しコマンド
 if(current===0 && input==="みかす"){
 current = 9
 fadeToQuestion()
@@ -332,17 +348,8 @@ return
 
 if(input===correct){
 
-if(current !== 9){
-correctSE.currentTime = 0
-correctSE.play()
-}
-
-if(current===9){
 whiteFlashToClear()
 return
-}
-
-state="correct"
 
 }else if(current===9 && input===q.dummy.toLowerCase()){
 
@@ -375,7 +382,6 @@ if(current>=questions.length){
 
 bgm.pause()
 bgm.currentTime = 0
-
 state="end"
 
 }else{
@@ -396,7 +402,7 @@ bgm.play()
 fadeToQuestion()
 }
 
-// ★ タイトルに戻る
+// タイトルに戻る
 function goTitle(){
 current = 0
 state = "start"
