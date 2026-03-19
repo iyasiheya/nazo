@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -6,6 +7,7 @@
 
 <style>
 
+/* ===== 全体 ===== */
 body{
 margin:0;
 font-family:sans-serif;
@@ -18,24 +20,31 @@ background-attachment:fixed;
 
 min-height:100vh;
 
-display:flex;
-justify-content:center;
-align-items:center;
+/* 中央固定をやめる */
+display:block;
+padding:20px;
 }
 
+/* ===== コンテナ（可変サイズ） ===== */
 .container{
-max-width:650px;
-padding:30px;
+width:min(92vw,700px);
+margin:0 auto;
+padding:20px;
 background:rgba(0,0,0,0.5);
 border-radius:12px;
 }
 
+/* ===== 画像・動画（スマホでも大きく） ===== */
 img, video{
-max-width:100%;
+width:100%;
+height:auto;
+max-height:75vh;
+object-fit:contain;
 border-radius:10px;
 margin-bottom:20px;
 }
 
+/* ===== 入力系 ===== */
 input{
 width:180px;
 padding:10px;
@@ -66,6 +75,7 @@ color:white;
 text-shadow:0 2px 5px rgba(0,0,0,0.8);
 }
 
+/* ===== 演出 ===== */
 #fadeScreen{
 position:fixed;
 top:0;
@@ -90,7 +100,31 @@ pointer-events:none;
 z-index:10000;
 }
 
+/* ===== スマホ最適化（強め） ===== */
+@media (max-width:600px){
+
+.label-text{
+font-size:24px;
+}
+
+input{
+width:140px;
+font-size:14px;
+}
+
+button{
+font-size:14px;
+padding:8px 20px;
+}
+
+img, video{
+max-height:65vh;
+}
+
+}
+
 </style>
+
 </head>
 
 <body>
@@ -111,7 +145,7 @@ const wrongSE = new Audio("wrong.mp3")
 bgm.loop = true
 wrongBGM.loop = true
 
-bgm.volume = 0.1
+bgm.volume = 0.05
 wrongBGM.volume = 0.5
 correctSE.volume = 1.0
 wrongSE.volume = 1.0
