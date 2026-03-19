@@ -12,8 +12,10 @@ font-family:sans-serif;
 text-align:center;
 
 background-image:url("background.jpg");
-background-size:cover;
+background-size:contain;
+background-repeat:no-repeat;
 background-position:center;
+background-color:black;
 background-attachment:fixed;
 
 min-height:100vh;
@@ -30,10 +32,25 @@ background:rgba(0,0,0,0.5);
 border-radius:12px;
 }
 
-img, video{
+img{
 max-width:100%;
 border-radius:10px;
 margin-bottom:20px;
+}
+
+video{
+max-width:100%;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+/* ★ 最後の動画だけ全画面表示 */
+#endingVideo{
+width:100vw;
+height:100vh;
+object-fit:contain;
+border-radius:0;
+margin:0;
 }
 
 input{
@@ -111,7 +128,7 @@ const wrongSE = new Audio("wrong.mp3")
 bgm.loop = true
 wrongBGM.loop = true
 
-bgm.volume = 0.05
+bgm.volume = 0.1
 wrongBGM.volume = 0.5
 correctSE.volume = 1.0
 wrongSE.volume = 1.0
@@ -229,13 +246,10 @@ img.src = q.image
 img.onload = () => {
 
     setTimeout(()=>{
-
         state="question"
         render()
-
         f.style.transition = "opacity 1.2s"
         f.style.opacity = 0
-
     },300)
 
 }
@@ -256,21 +270,16 @@ img.onload = () => {
     w.style.transition = "none"
     w.style.opacity = 1
 
-    // SE（正解から1.2秒後）
     setTimeout(()=>{
         correctSE.currentTime = 0
         correctSE.play()
     },1200)
 
-    // 白1秒維持 → フェード2秒
     setTimeout(()=>{
-
         state="correct"
         render()
-
         w.style.transition = "opacity 2s"
         w.style.opacity = 0
-
     },1000)
 
 }
@@ -295,13 +304,10 @@ img.onload = () => {
     w.style.opacity = 1
 
     setTimeout(()=>{
-
         state="correct"
         render()
-
         w.style.transition = "opacity 2s"
         w.style.opacity = 0
-
     },5000)
 
 }
@@ -345,7 +351,6 @@ return
 bgm.pause()
 wrongBGM.currentTime = 0
 wrongBGM.play()
-
 state="dummy"
 
 }else{
@@ -368,12 +373,9 @@ function nextQuestion(){
 current++
 
 if(current>=questions.length){
-
 bgm.pause()
 bgm.currentTime = 0
-
 state="end"
-
 }else{
 fadeToQuestion()
 return
@@ -383,12 +385,9 @@ render()
 }
 
 function retry(){
-
 wrongBGM.pause()
 wrongBGM.currentTime = 0
-
 bgm.play()
-
 fadeToQuestion()
 }
 
