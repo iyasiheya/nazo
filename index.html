@@ -13,21 +13,27 @@ margin:0;
 font-family:sans-serif;
 text-align:center;
 
+/* ★ 背景：全体表示（トリミングなし） */
 background-image:url("background.jpg");
-background-size:cover;
-background-position:center;
-background-attachment:scroll; /* ★スクロール可能に */
+background-size:contain;
+background-repeat:no-repeat;
+background-position:top center;
+background-color:black;
 
-min-height:100vh;
-display:block;
-padding:20px;
-overflow-y:auto;
+/* ★ PCでスクロールして全体を見る */
+min-height:200vh;
+
+/* ★ 中央配置 */
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 }
 
 /* ===== コンテナ ===== */
 .container{
-width:min(92vw,700px);
-margin:0 auto;
+width:min(95vw,900px);
+margin:40px auto;
 padding:20px;
 background:rgba(0,0,0,0.5);
 border-radius:12px;
@@ -35,15 +41,19 @@ border-radius:12px;
 
 /* ===== 画像・動画 ===== */
 img, video{
-width:100%;
+display:block;
+margin:0 auto 20px;
+
+/* ★ 最大化（PCは縦基準） */
+max-width:100%;
+max-height:85vh;
+width:auto;
 height:auto;
-max-height:75vh;
+
 object-fit:contain;
-border-radius:10px;
-margin-bottom:20px;
 }
 
-/* ===== UI ===== */
+/* ===== 入力 ===== */
 input{
 width:180px;
 padding:10px;
@@ -99,8 +109,12 @@ pointer-events:none;
 z-index:10000;
 }
 
-/* ===== スマホ最適化 ===== */
+/* ===== スマホ ===== */
 @media (max-width:600px){
+
+body{
+min-height:150vh;
+}
 
 .label-text{
 font-size:24px;
@@ -116,10 +130,9 @@ font-size:14px;
 padding:8px 20px;
 }
 
-/* ★画像を横幅いっぱいに（重要） */
+/* ★ スマホは横幅最大 */
 img, video{
 width:100%;
-height:auto;
 max-height:none;
 }
 
@@ -283,7 +296,6 @@ function whiteFlashToClear(){
 const w=document.getElementById("whiteScreen")
 let q = questions[current]
 
-// フェード時間
 let fadeTime = (current === 9) ? 4000 : 1200
 
 const img = new Image()
@@ -291,7 +303,6 @@ img.src = q.clear
 
 img.onload = () => {
 
-    // Q10だけBGM停止
     if(current === 9){
         bgm.pause()
         bgm.currentTime = 0
@@ -305,11 +316,9 @@ img.onload = () => {
         state="correct"
         render()
 
-        // フェード開始
         w.style.transition = `opacity ${fadeTime/1000}s`
         w.style.opacity = 0
 
-        // Q1〜9のみSE（終了と同時）
         if(current !== 9){
             setTimeout(()=>{
                 correctSE.currentTime = 0
@@ -339,7 +348,6 @@ let input=document.getElementById("answer").value.trim().toLowerCase()
 let q=questions[current]
 let correct=q.answer.toLowerCase()
 
-// 隠しコマンド
 if(current===0 && input==="みかす"){
 current = 9
 fadeToQuestion()
@@ -347,10 +355,8 @@ return
 }
 
 if(input===correct){
-
 whiteFlashToClear()
 return
-
 }else if(current===9 && input===q.dummy.toLowerCase()){
 
 bgm.pause()
@@ -402,7 +408,6 @@ bgm.play()
 fadeToQuestion()
 }
 
-// タイトルに戻る
 function goTitle(){
 current = 0
 state = "start"
