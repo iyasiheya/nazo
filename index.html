@@ -168,7 +168,6 @@ return
 
 if(state==="correct"){
 let q=questions[current]
-
 let btnText = (current === 9) ? "最後に" : "次の部屋へ進む"
 
 c.innerHTML=`
@@ -243,7 +242,7 @@ img.onload = () => {
 
 }
 
-// ===== Q1〜Q9用 白フェード（2秒） =====
+// ===== Q1〜Q9用 白フェード =====
 function whiteFlashQuick(){
 
 const w=document.getElementById("whiteScreen")
@@ -257,6 +256,13 @@ img.onload = () => {
     w.style.transition = "none"
     w.style.opacity = 1
 
+    // SE（正解から1.2秒後）
+    setTimeout(()=>{
+        correctSE.currentTime = 0
+        correctSE.play()
+    },1200)
+
+    // 白1秒維持 → フェード2秒
     setTimeout(()=>{
 
         state="correct"
@@ -265,18 +271,13 @@ img.onload = () => {
         w.style.transition = "opacity 2s"
         w.style.opacity = 0
 
-        setTimeout(()=>{
-            correctSE.currentTime = 0
-            correctSE.play()
-        },1200)
-
-    },100)
+    },1000)
 
 }
 
 }
 
-// ===== 白演出（Q10用そのまま） =====
+// ===== Q10用（SEなし） =====
 function whiteFlashToClear(){
 
 const w=document.getElementById("whiteScreen")
@@ -332,8 +333,6 @@ return
 if(input===correct){
 
 if(current===9){
-correctSE.currentTime = 0
-correctSE.play()
 whiteFlashToClear()
 }else{
 whiteFlashQuick()
