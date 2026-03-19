@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -7,49 +6,36 @@
 
 <style>
 
-/* ===== 全体 ===== */
 body{
 margin:0;
 font-family:sans-serif;
 text-align:center;
 
-/* 背景：全体表示（トリミングなし） */
 background-image:url("background.jpg");
-background-size:contain;
-background-repeat:no-repeat;
-background-position:top center;
-background-color:black;
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
 
-/* スクロールで全体確認 */
-min-height:200vh;
+min-height:100vh;
 
 display:flex;
-flex-direction:column;
 justify-content:center;
 align-items:center;
 }
 
-/* ===== コンテナ ===== */
 .container{
-width:min(95vw,900px);
-margin:40px auto;
-padding:20px;
+max-width:650px;
+padding:30px;
 background:rgba(0,0,0,0.5);
 border-radius:12px;
 }
 
-/* ===== 画像・動画 ===== */
 img, video{
-display:block;
-margin:0 auto 20px;
 max-width:100%;
-max-height:85vh;
-width:auto;
-height:auto;
-object-fit:contain;
+border-radius:10px;
+margin-bottom:20px;
 }
 
-/* ===== UI ===== */
 input{
 width:180px;
 padding:10px;
@@ -80,7 +66,6 @@ color:white;
 text-shadow:0 2px 5px rgba(0,0,0,0.8);
 }
 
-/* ===== 演出 ===== */
 #fadeScreen{
 position:fixed;
 top:0;
@@ -105,37 +90,7 @@ pointer-events:none;
 z-index:10000;
 }
 
-/* ===== スマホ ===== */
-@media (max-width:600px){
-
-body{
-min-height:150vh;
-}
-
-.label-text{
-font-size:24px;
-}
-
-input{
-width:140px;
-font-size:14px;
-}
-
-button{
-font-size:14px;
-padding:8px 20px;
-}
-
-/* スマホは横幅最大 */
-img, video{
-width:100%;
-max-height:none;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
@@ -156,7 +111,7 @@ const wrongSE = new Audio("wrong.mp3")
 bgm.loop = true
 wrongBGM.loop = true
 
-bgm.volume = 0.1
+bgm.volume = 0.05
 wrongBGM.volume = 0.5
 correctSE.volume = 1.0
 wrongSE.volume = 1.0
@@ -214,13 +169,10 @@ return
 if(state==="correct"){
 let q=questions[current]
 
-// ★ Q10だけボタン変更
-let btnText = (current === 9) ? "最後に" : "次の部屋へ進む"
-
 c.innerHTML=`
 <img src="${q.clear}">
 <br>
-<button onclick="nextQuestion()">${btnText}</button>
+<button onclick="nextQuestion()">次の部屋へ進む</button>
 `
 return
 }
@@ -289,23 +241,16 @@ img.onload = () => {
 
 }
 
-// ===== 白フェード =====
-function whiteFlashToClear(){
+// ===== Q1〜Q9用 白フェード（1.2秒） =====
+function whiteFlashQuick(){
 
 const w=document.getElementById("whiteScreen")
 let q = questions[current]
-
-let fadeTime = (current === 9) ? 4000 : 1200
 
 const img = new Image()
 img.src = q.clear
 
 img.onload = () => {
-
-    if(current === 9){
-        bgm.pause()
-        bgm.currentTime = 0
-    }
 
     w.style.transition = "none"
     w.style.opacity = 1
@@ -315,17 +260,47 @@ img.onload = () => {
         state="correct"
         render()
 
-        w.style.transition = `opacity ${fadeTime/1000}s`
+        w.style.transition = "opacity 1.2s"
         w.style.opacity = 0
 
-        if(current !== 9){
-            setTimeout(()=>{
-                correctSE.currentTime = 0
-                correctSE.play()
-            }, fadeTime)
-        }
+        // フェード終了と同時にSE
+        setTimeout(()=>{
+            correctSE.currentTime = 0
+            correctSE.play()
+        },1200)
 
-    },300)
+    },100)
+
+}
+
+}
+
+// ===== 白演出（Q10用そのまま） =====
+function whiteFlashToClear(){
+
+const w=document.getElementById("whiteScreen")
+let q = questions[current]
+
+const img = new Image()
+img.src = q.clear
+
+img.onload = () => {
+
+    bgm.pause()
+    bgm.currentTime = 0
+
+    w.style.transition = "none"
+    w.style.opacity = 1
+
+    setTimeout(()=>{
+
+        state="correct"
+        render()
+
+        w.style.transition = "opacity 2s"
+        w.style.opacity = 0
+
+    },5000)
 
 }
 
@@ -347,6 +322,7 @@ let input=document.getElementById("answer").value.trim().toLowerCase()
 let q=questions[current]
 let correct=q.answer.toLowerCase()
 
+// 隠しコマンド
 if(current===0 && input==="みかす"){
 current = 9
 fadeToQuestion()
@@ -354,8 +330,17 @@ return
 }
 
 if(input===correct){
+
+if(current===9){
+correctSE.currentTime = 0
+correctSE.play()
 whiteFlashToClear()
+}else{
+whiteFlashQuick()
+}
+
 return
+
 }else if(current===9 && input===q.dummy.toLowerCase()){
 
 bgm.pause()
@@ -387,6 +372,7 @@ if(current>=questions.length){
 
 bgm.pause()
 bgm.currentTime = 0
+
 state="end"
 
 }else{
