@@ -169,10 +169,12 @@ return
 if(state==="correct"){
 let q=questions[current]
 
+let btnText = (current === 9) ? "最後に" : "次の部屋へ進む"
+
 c.innerHTML=`
 <img src="${q.clear}">
 <br>
-<button onclick="nextQuestion()">次の部屋へ進む</button>
+<button onclick="nextQuestion()">${btnText}</button>
 `
 return
 }
@@ -263,7 +265,6 @@ img.onload = () => {
         w.style.transition = "opacity 2s"
         w.style.opacity = 0
 
-        // SEは1.2秒で再生（維持）
         setTimeout(()=>{
             correctSE.currentTime = 0
             correctSE.play()
